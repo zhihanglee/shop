@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', '收货地址列表')
+@section('title', '收货地址')
 
 @section('content')
     <div class="row">
@@ -27,8 +27,12 @@
                                 <td>{{ $address->zip }}</td>
                                 <td>{{ $address->contact_phone }}</td>
                                 <td>
-                                    <button class="btn btn-primary">修改</button>
-                                    <button class="btn btn-danger">删除</button>
+                                    <a href="{{route('user_addresses.edit',['user_address'=>$address->id])}}"
+                                       class="btn btn-primary">修改</a>
+
+                                    <button class="btn btn-danger btn-del-address" type="button"
+                                            data-id="{{$address->id}}">删除
+                                    </button>
                                 </td>
                             </tr>
                         @endforeach
@@ -39,3 +43,29 @@
         </div>
     </div>
 @endsection
+@section('scriptJs')
+    <script>
+        $(function () {
+            //点击删除
+            $('.btn-del-address').click(function () {
+                //获取id值
+                var id = $(this).data('id');
+                swal({
+                    title: '确认要删除地址么？',
+                    icon: "warning",
+                    buttons: ['取消', '确定'],
+                    dangerMode: true,
+                })
+                    .then(function (willDelete) {
+                        if (!willDelete) {
+                            return;
+                        }
+                        axios.delete('/user_addresses/' + id)
+                            .then(function () {
+                                location.reload();
+                            })
+                    })
+            });
+        });
+    </script>
+@stop
